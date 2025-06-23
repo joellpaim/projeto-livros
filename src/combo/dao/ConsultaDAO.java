@@ -5,62 +5,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConsultaDAO {
+    private static final String DRIVER = "org.postgresql.Driver";
+    private static final String URL = "jdbc:postgresql://localhost:5432/livros";
+    private static final String USUARIO = "livros_user";
+    private static final String SENHA = "livros_pass";
 
     static {
         try {
-            Class.forName("org.postgresql.Driver");
+            Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Driver JDBC não encontrado", e);
         }
     }
 
-    // private String url = "jdbc:postgresql://localhost:5432/livros";
-    // private String usuario = "postgres";
-    // private String senha = "15Moto05!";
+    public int getTotalRegistros() {
+        String sql = "SELECT COUNT(*) FROM livros";
+        try (Connection conn = DriverManager.getConnection(URL, USUARIO, SENHA);
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
-    // Alterado para o banco de dados livros via Docker
-    private String url = "jdbc:postgresql://localhost:5432/livros";
-    private String usuario = "livros_user";
-    private String senha = "livros_pass";
+            return rs.next() ? rs.getInt(1) : 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao obter total de registros", e);
+        }
+    }
 
+    public List<String[]> getDadosPaginados(int offset, int limit) {
+        List<String[]> dados = new ArrayList<>();
+        String sql = "SELECT codigo, titulo FROM livros ORDER BY codigo LIMIT ? OFFSET ?";
+
+        try (Connection conn = DriverManager.getConnection(URL, USUARIO, SENHA);
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, limit);
+            stmt.setInt(2, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    dados.add(new String[] {
+                            String.valueOf(rs.getInt("codigo")),
+                            rs.getString("titulo")
+                    });
+                }
+            }
+            return dados;
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao obter dados paginados", e);
+        }
+    }
+
+    public ResultSet getDadosPaginadosAsResultSet(int offset, int limit) throws SQLException {
+        Connection conn = DriverManager.getConnection(URL, USUARIO, SENHA);
+        String sql = "SELECT codigo, titulo FROM livros ORDER BY codigo LIMIT ? OFFSET ?";
+        PreparedStatement stmt = conn.prepareStatement(sql,
+                ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_READ_ONLY);
+
+        stmt.setInt(1, limit);
+        stmt.setInt(2, offset);
+        return stmt.executeQuery();
+    }
 
     public int getTotalPaginas(int itensPorPagina) {
-        String sql = "SELECT COUNT(*) FROM livros";
-        try (Connection conn = DriverManager.getConnection(url, usuario, senha);
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            if (rs.next()) {
-                int totalRegistros = rs.getInt(1);
-                return (int) Math.ceil((double) totalRegistros / itensPorPagina);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 1;
+        int total = getTotalRegistros();
+        return (int) Math.ceil((double) total / itensPorPagina);
     }
 
     public List<String[]> getDadosPagina(int pagina, int itensPorPagina) {
-        List<String[]> dados = new ArrayList<>();
         int offset = (pagina - 1) * itensPorPagina;
-
-        String sql = "SELECT id, titulo FROM livros ORDER BY id LIMIT ? OFFSET ?";
-        try (Connection conn = DriverManager.getConnection(url, usuario, senha);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, itensPorPagina);
-            stmt.setInt(2, offset);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                dados.add(new String[]{
-                        String.valueOf(rs.getInt("id")),
-                        rs.getString("titulo")
-                });
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return dados;
+        return getDadosPaginados(offset, itensPorPagina);
     }
 }

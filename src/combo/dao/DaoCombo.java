@@ -16,63 +16,56 @@ import java.sql.SQLException;
  */
 public class DaoCombo {
     // atributos
-    private BoConexao conexao;  
+    private BoConexao conexao;
 
     // construtor
     public DaoCombo(BoConexao conexao) {
         this.conexao = conexao;
-    }  
-    
+    }
+
     /**
      * 
      * @return
      * @throws SQLException
      * @throws E_BD
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public ResultSet listaLivros() throws SQLException, E_BD, ClassNotFoundException {
         // consultar o código
         String sql = "select titulo from livros"
-                 //   + " limit 1200000"
-                ;
+        // + " limit 1200000"
+        ;
 
         // obtem objeto
         PreparedStatement ps = this.getConexao().getBd().getStatement(sql);
-        
+
         // executar sql
         ResultSet rs = this.getConexao().getBd().consulta(ps);
 
         // return
         return rs;
-    }     
+    }
 
     /**
      * 
      * @return
      * @throws SQLException
      * @throws E_BD
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
-    public ResultSet pesquisaDadosLivros() throws SQLException, E_BD, ClassNotFoundException {
-        // consultar o código
-        String sql = "select l.titulo, a.nome, e.numero, e.ano"
-                + "   from livros l inner join livroAutor la on l.codigo = la.codigoLivro "
-                + "   inner join autor a on a.codigo = la.codigoAutor"
-                + "   inner join edicao e on a.codigo = e.codigoLivro"
-               // + "   limit 1000000"
-                ;
+    public ResultSet pesquisaDadosLivros(int limite) throws SQLException, E_BD, ClassNotFoundException {
+        String sql = "SELECT l.titulo, a.nome, e.numero, e.ano " +
+                "FROM livros l " +
+                "INNER JOIN livroAutor la ON l.codigo = la.codigoLivro " +
+                "INNER JOIN autor a ON a.codigo = la.codigoAutor " +
+                "INNER JOIN edicao e ON a.codigo = e.codigoLivro " +
+                "LIMIT ?";
 
-        // obtem objeto
         PreparedStatement ps = this.getConexao().getBd().getStatement(sql);
-        
-        // executar sql
-        ResultSet rs = this.getConexao().getBd().consulta(ps);
-        
-        // return
-        return rs;
-    }  
-    
-    
+        ps.setInt(1, limite);
+        return this.getConexao().getBd().consulta(ps);
+    }
+
     // getter
     public BoConexao getConexao() {
         return conexao;

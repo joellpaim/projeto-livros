@@ -3,7 +3,8 @@ package combo.gui.consulta;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import combo.dao.ConsultaDAO;
 
 public class GuiConsulta extends JDialog {
@@ -15,33 +16,32 @@ public class GuiConsulta extends JDialog {
     private int paginaAtual = 1;
     private final int itensPorPagina = 10;
     private int totalPaginas;
-
     private ConsultaDAO dao;
 
     public GuiConsulta(Frame parent, boolean modal, String title) {
         super(parent, modal);
-
         dao = new ConsultaDAO();
-        totalPaginas = dao.getTotalPaginas(itensPorPagina);
+        atualizarTotalPaginas(); // Calcula o total de páginas
 
         initComponents();
         setTitle(title);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(800, 600);
-        carregarPagina(paginaAtual);
+
+        // Carrega a primeira página imediatamente
+        carregarPagina(1);
+        atualizarBotoes();
     }
 
     private void initComponents() {
-        setLayout(null);
+        setLayout(new BorderLayout());
 
         tabela = new JTable();
         scrollPane = new JScrollPane(tabela);
-        scrollPane.setBounds(0, 0, 800, 400);
-        add(scrollPane);
+        add(scrollPane, BorderLayout.CENTER);
 
         JPanel paginationPanel = new JPanel();
-        paginationPanel.setBounds(0, 420, 800, 50);
         btnPrimeira = new JButton("<<");
         btnAnterior = new JButton("<");
         lblPagina = new JLabel();
@@ -56,7 +56,7 @@ public class GuiConsulta extends JDialog {
         paginationPanel.add(btnProxima);
         paginationPanel.add(btnUltima);
 
-        add(paginationPanel);
+        add(paginationPanel, BorderLayout.SOUTH);
 
         btnPrimeira.addActionListener(e -> mudarPagina(1));
         btnAnterior.addActionListener(e -> mudarPagina(paginaAtual - 1));
@@ -64,26 +64,54 @@ public class GuiConsulta extends JDialog {
         btnUltima.addActionListener(e -> mudarPagina(totalPaginas));
     }
 
+    private void atualizarTotalPaginas() {
+        int totalItens = dao.getTotalRegistros();
+        totalPaginas = (int) Math.ceil((double) totalItens / itensPorPagina);
+        totalPaginas = Math.max(totalPaginas, 1);
+    }
+
     private void mudarPagina(int novaPagina) {
-        if (novaPagina >= 1 && novaPagina <= totalPaginas) {
-            paginaAtual = novaPagina;
-            updateLabel();
+        int paginaDestino = Math.max(1, Math.min(novaPagina, totalPaginas));
+        if (paginaDestino != paginaAtual) {
+            paginaAtual = paginaDestino;
             carregarPagina(paginaAtual);
+            updateLabel();
+            atualizarBotoes();
         }
     }
 
     private void carregarPagina(int pagina) {
-        List<String[]> dados = dao.getDadosPagina(pagina, itensPorPagina);
-        String[] colunas = { "Código", "Título" };
-        DefaultTableModel modelo = new DefaultTableModel(colunas, 0);
-        for (String[] linha : dados) {
-            modelo.addRow(linha);
+        try {
+            paginaAtual = Math.max(1, Math.min(pagina, totalPaginas));
+            int offset = (paginaAtual - 1) * itensPorPagina;
+
+            ResultSet rs = dao.getDadosPaginadosAsResultSet(offset, itensPorPagina);
+            GuiMontarJTable montador = new GuiMontarJTable(rs);
+            DefaultTableModel modelo = montador.criaTabela();
+
+            if (modelo != null) {
+                tabela.setModel(modelo);
+            }
+
+            updateLabel();
+            atualizarBotoes();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao carregar dados: " + e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
-        tabela.setModel(modelo);
     }
 
     private void updateLabel() {
-        lblPagina.setText("Página " + paginaAtual + " de " + totalPaginas);
+        lblPagina.setText(String.format("Página %d de %d", paginaAtual, totalPaginas));
+    }
+
+    private void atualizarBotoes() {
+        btnPrimeira.setEnabled(paginaAtual > 1);
+        btnAnterior.setEnabled(paginaAtual > 1);
+        btnProxima.setEnabled(paginaAtual < totalPaginas);
+        btnUltima.setEnabled(paginaAtual < totalPaginas);
     }
 
     // Métodos para integração com CoConsulta
@@ -110,4 +138,3 @@ public class GuiConsulta extends JDialog {
         });
     }
 }
-

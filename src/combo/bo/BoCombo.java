@@ -17,6 +17,7 @@ public class BoCombo {
     // atributos
     private BoConexao conexao;
     private DaoCombo dao;
+    private static final int LIMITE_PADRAO = 10;
 
     // construtor
     public BoCombo(BoConexao conexao) {
@@ -26,26 +27,28 @@ public class BoCombo {
 
     /**
      * obtem lista de livros
+     * 
      * @return
      * @throws SQLException
      * @throws E_BD
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public ResultSet listaLivros() throws SQLException, E_BD, ClassNotFoundException {
         return this.getDao().listaLivros();
     }
-    
+
     /**
      * obtem lista de livros e seus dados relacionados
+     * 
      * @return
      * @throws SQLException
      * @throws E_BD
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public ResultSet pesquisaDadosLivros() throws SQLException, E_BD, ClassNotFoundException {
-        return this.getDao().pesquisaDadosLivros();
+        return this.getDao().pesquisaDadosLivros(LIMITE_PADRAO);
     }
-    
+
     // getters
     public BoConexao getConexao() {
         return conexao;
@@ -55,5 +58,4 @@ public class BoCombo {
         return dao;
     }
 
-   
 }

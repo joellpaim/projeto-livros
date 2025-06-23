@@ -7,6 +7,7 @@ package combo.gui.consulta;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -24,9 +25,20 @@ public class GuiMontarJTable {
     }
 
     public DefaultTableModel criaTabela() throws SQLException {
+        DefaultTableModel dataModel = this.monta_tabela();
 
-        DefaultTableModel dataModel;
-        dataModel = this.monta_tabela();
+        try {
+            if (consulta != null) {
+                Statement stmt = consulta.getStatement();
+                consulta.close();
+                if (stmt != null) {
+                    stmt.close();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return dataModel;
     }
 
