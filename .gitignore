@@ -1,0 +1,81 @@
+# Arquivos do Gitignore para o projeto de banco de dados de livros
+
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.log
+bin/
+build/
+out/
+target/
+.mtj.tmp/
+*.iml
+*.ipr
+*.iws
+.idea/
+*.swp
+*.swo
+
+### Banco de dados ###
+# Dados do PostgreSQL (não versionar dados do container)
+postgres-livros/postgres_data/
+*.dump
+*.backup
+
+### Docker ###
+# Arquivos temporários do Docker
+*.tmp
+
+### Sistema operacional ###
+# Arquivos do Mac
+.DS_Store
+._*
+
+# Arquivos do Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Arquivos do Linux
+*~
+
+### IDE ###
+# Eclipse
+.settings/
+.project
+.classpath
+.factorypath
+
+# NetBeans
+nbproject/
+nbactions.xml
+
+# VS Code
+.vscode/
+
+### Outros ###
+*.log
+*.bak
+*.orig
+*.rej
+*.zip
+*.tar.gz
+*.7z
+*.cache
+*.diff
+*.patch
+*.tmp
+*.swp
+*.swo
+*~
+*.pid
+
+# Arquivos de instrução que não precisam ser versionados
+postgres-livros/initdb/0 - Instrucoes para a carga da base de dados de livros (leia primeiro).txt
+postgres-livros/initdb/sources.txt
+
+# Exceções (mantém o driver JDBC)
+!postgresql-42.2.4.jar

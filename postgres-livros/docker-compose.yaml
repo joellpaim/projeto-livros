@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_livros
+    environment:
+      POSTGRES_DB: livros
+      POSTGRES_USER: livros_user
+      POSTGRES_PASSWORD: livros_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data  
+    networks:
+      custom_net:
+        ipv4_address: 172.25.0.10
+    restart: always
+    healthcheck:  
+      test: ["CMD-SHELL", "pg_isready -U livros_user -d livros"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  custom_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.25.0.0/24
+
+volumes:
+  postgres_data: 
