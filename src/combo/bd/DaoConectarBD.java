@@ -27,11 +27,10 @@ public class DaoConectarBD {
 
     public Connection conectar() throws E_BD, java.lang.ClassNotFoundException, SQLException {
         // pegar configuração padrão
-        // this.voConexao = new
-        // DaoStringConexaoPostgreSQL().getConfiguracaoAlternativa();
         this.voConexao = new DaoStringConexaoPostgreSQL().getConfiguracaoDefault();
-        // if (this.voConexao == null) {
-        // }
+        if (this.voConexao == null) {
+            this.voConexao = new DaoStringConexaoPostgreSQL().getConfiguracaoAlternativa();
+        }
 
         // testa dados da conexão, se não existem gera exceção
         if ((this.getVoConexao() == null) || (this.getVoConexao().getBaseDados() == null)

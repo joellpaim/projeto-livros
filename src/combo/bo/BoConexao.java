@@ -7,7 +7,6 @@ package combo.bo;
 
 import combo.bd.DaoConectarBD;
 import combo.bd.DaoConsultarBD;
-import combo.bd.DaoStringConexaoPostgreSQL;
 import combo.bd.E_BD;
 import java.sql.SQLException;
 
