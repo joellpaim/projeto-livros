@@ -45,6 +45,14 @@ javac -cp ".:postgresql-42.2.4.jar" src/combo/**/*.java
 java -cp ".:postgresql-42.2.4.jar:src" combo.principal.Principal
 ```
 
+```bash
+# Compile o projeto (substituindo pelo driver MySQL)
+javac -cp ".:mysql-connector-j-9.3.0.jar" src/combo/**/*.java
+
+# Execute a aplicação (com o driver MySQL)
+java -cp ".:mysql-connector-j-9.3.0.jar:src" combo.principal.Principal
+```
+
 ### 3. Parar o banco de dados (quando necessário)
 
 ```bash

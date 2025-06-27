@@ -18,6 +18,10 @@ public class DaoStringConexaoPostgreSQL implements DaoStringConexao {
         String url = "jdbc:postgresql://" + vo.getHost() +
                 ":" + vo.getPorta() + "/" + vo.getBaseDados();
 
+        // Usar para MySQL
+        // String url =
+        // "jdbc:mysql://localhost:3306/livros?useSSL=false&serverTimezone=UTC";
+
         // mostra conexao
         System.out.println(url);
 
@@ -56,15 +60,14 @@ public class DaoStringConexaoPostgreSQL implements DaoStringConexao {
         VoConexao vo = new VoConexao();
 
         // seta valores
-        vo.setSgbd("PostgreSQL");
+        vo.setSgbd("MySQL");
         vo.setHost("localhost");
-        vo.setPorta("5432");
+        vo.setPorta("3306");
         vo.setBaseDados("livros");
-        vo.setUsuario("postgres");
-        vo.setSenha("postgres");
-        vo.setClassDriver("org.postgresql.Driver");
+        vo.setUsuario("usuario");
+        vo.setSenha("senha_usuario");
+        vo.setClassDriver("com.mysql.cj.jdbc.Driver");
 
-        // returns
         return vo;
     }
 
