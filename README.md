@@ -39,18 +39,16 @@ O banco de dados estará acessível em:
 cd ..
 
 # Compile o projeto
-javac -cp ".:postgresql-42.2.4.jar" src/combo/**/*.java
+javac -cp ".:mysql-connector-j-9.3.0.jar:postgresql-42.2.4.jar" src/combo/**/*.java
 
-# Execute a aplicação
-java -cp ".:postgresql-42.2.4.jar:src" combo.principal.Principal
+# Execute a aplicação com o driver PostgreSQL
+java -cp ".:postgresql-42.2.4.jar:src" combo.principal.Principal postgresql
 ```
 
 ```bash
-# Compile o projeto (substituindo pelo driver MySQL)
-javac -cp ".:mysql-connector-j-9.3.0.jar" src/combo/**/*.java
 
-# Execute a aplicação (com o driver MySQL)
-java -cp ".:mysql-connector-j-9.3.0.jar:src" combo.principal.Principal
+# Execute a aplicação com o driver MySQL
+java -cp ".:mysql-connector-j-9.3.0.jar:src" combo.principal.Principal mysql
 ```
 
 ### 3. Parar o banco de dados (quando necessário)

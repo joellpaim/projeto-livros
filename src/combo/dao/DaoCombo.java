@@ -56,7 +56,7 @@ public class DaoCombo {
     public ResultSet pesquisaDadosLivros(int limite) throws SQLException, E_BD, ClassNotFoundException {
         String sql = "SELECT l.titulo, a.nome, e.numero, e.ano " +
                 "FROM livros l " +
-                "INNER JOIN livroAutor la ON l.codigo = la.codigoLivro " +
+                "INNER JOIN livroautor la ON l.codigo = la.codigoLivro " +
                 "INNER JOIN autor a ON a.codigo = la.codigoAutor " +
                 "INNER JOIN edicao e ON a.codigo = e.codigoLivro " +
                 "LIMIT ?";

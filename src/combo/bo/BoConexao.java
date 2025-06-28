@@ -21,7 +21,7 @@ public class BoConexao {
     public BoConexao() {
     }
 
-    public void conectar() throws E_BD, ClassNotFoundException, SQLException {
+    public void conectar(String tipoBanco) throws E_BD, ClassNotFoundException, SQLException {
         // testa se existe conexao
         if (this.getConexao() == null) {
             // cria conexao
@@ -31,7 +31,7 @@ public class BoConexao {
             this.setBd(new DaoConsultarBD(this.getConexao()));
 
             // conectar
-            this.getConexao().conectar();
+            this.getConexao().conectar(tipoBanco);
         }
     }
 

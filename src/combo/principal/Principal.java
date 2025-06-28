@@ -26,10 +26,10 @@ public class Principal {
     /**
      * conectar
      */
-    private void conectar() {
+    private void conectar(String tipoBanco) {
         try {
             // conectar
-            this.getConexao().conectar();
+            this.getConexao().conectar(tipoBanco);
             System.out.println("conectou");
 
         } catch (Exception ex) {
@@ -66,9 +66,9 @@ public class Principal {
      * *
      * controle de execucao
      */
-    public void executar() {
+    public void executar(String tipoBanco) {
         // conectar
-        this.conectar();
+        this.conectar(tipoBanco);
 
         // cria tela
         this.gui = new GuiCombo(true, conexao);
@@ -82,8 +82,9 @@ public class Principal {
 
     // main
     public static void main(String args[]) {
+        String tipoBanco = (args.length > 0) ? args[0] : "postgresql";
         Principal p = new Principal();
-        p.executar();
+        p.executar(tipoBanco);
 
     }
 }

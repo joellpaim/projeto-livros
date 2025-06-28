@@ -25,11 +25,18 @@ public class DaoConectarBD {
         this(null, null);
     }
 
-    public Connection conectar() throws E_BD, java.lang.ClassNotFoundException, SQLException {
-        // pegar configuração padrão
-        this.voConexao = new DaoStringConexaoPostgreSQL().getConfiguracaoDefault();
-        if (this.voConexao == null) {
-            this.voConexao = new DaoStringConexaoPostgreSQL().getConfiguracaoAlternativa();
+    public Connection conectar(String tipoBanco) throws E_BD, java.lang.ClassNotFoundException, SQLException {
+
+        // Declara a variável com o tipo da interface
+        DaoStringConexao conexaoConfig;
+
+        // Define o tipo de conexão com base no banco
+        if ("mysql".equalsIgnoreCase(tipoBanco)) {
+            conexaoConfig = new DaoStringConexaoMySQL();
+            this.voConexao = conexaoConfig.getConfiguracaoDefault();
+        } else {
+            conexaoConfig = new DaoStringConexaoPostgreSQL();
+            this.voConexao = conexaoConfig.getConfiguracaoDefault();
         }
 
         // testa dados da conexão, se não existem gera exceção
@@ -40,9 +47,6 @@ public class DaoConectarBD {
             throw new E_BD("Não foi possível conectar com o SGBD com as" +
                     " informações " + this.getVoConexao());
         }
-
-        // realiza conexão e carrega driver
-        DaoStringConexao conexaoConfig = new DaoStringConexaoPostgreSQL();
 
         // pega configuração da conexao
         String url = conexaoConfig.getStringConexao(this.getVoConexao());
