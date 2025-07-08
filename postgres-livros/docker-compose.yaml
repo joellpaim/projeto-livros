@@ -1,9 +1,10 @@
 version: '3.8'
 
 services:
-  db:
+  postgres_livros:
     image: postgres:15
     container_name: postgres_livros
+    restart: always
     environment:
       POSTGRES_DB: livros
       POSTGRES_USER: livros_user
@@ -11,24 +12,30 @@ services:
     ports:
       - "5432:5432"
     volumes:
+      - postgres_data:/var/lib/postgresql/data
       - ./initdb:/docker-entrypoint-initdb.d
-      - postgres_data:/var/lib/postgresql/data  
     networks:
-      custom_net:
-        ipv4_address: 172.25.0.10
-    restart: always
-    healthcheck:  
-      test: ["CMD-SHELL", "pg_isready -U livros_user -d livros"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - livros_network
 
-networks:
-  custom_net:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.25.0.0/24
+  # Opcional: pgAdmin para administração
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_livros
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@livros.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "8081:80"
+    depends_on:
+      - postgres_livros
+    networks:
+      - livros_network
 
 volumes:
-  postgres_data: 
+  postgres_data:
+
+networks:
+  livros_network:
+    driver: bridge
+

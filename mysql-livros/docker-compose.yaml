@@ -1,20 +1,45 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:latest
-    container_name: mysql-container
+  mysql_livros:
+    image: mysql:8.0
+    container_name: mysql_livros
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: senha_segura
+      MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: livros
-      MYSQL_USER: usuario
-      MYSQL_PASSWORD: senha_usuario
+      MYSQL_USER: livros_user
+      MYSQL_PASSWORD: livros_pass
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./scripts-sql:/docker-entrypoint-initdb.d 
-    restart: unless-stopped
+      - ./scripts-sql:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - livros_network
+
+  # Opcional: phpMyAdmin para administração
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_livros
+    restart: always
+    environment:
+      PMA_HOST: mysql_livros
+      PMA_PORT: 3306
+      PMA_USER: livros_user
+      PMA_PASSWORD: livros_pass
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql_livros
+    networks:
+      - livros_network
 
 volumes:
   mysql_data:
+
+networks:
+  livros_network:
+    driver: bridge
+
