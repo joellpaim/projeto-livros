@@ -41,7 +41,7 @@ public class DaoStringConexaoPostgreSQL implements DaoStringConexao {
         // vo.setBaseDados("inf0211");
         // vo.setUsuario("alunos");
         // vo.setSenha("postgres");
-        vo.setClassDriver("org.postgresql.Driver");
+        // vo.setClassDriver("org.postgresql.Driver");
 
         // Alterado para o banco de dados livros via Docker
         vo.setHost("localhost");
