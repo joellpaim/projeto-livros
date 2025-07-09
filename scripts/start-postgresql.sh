@@ -1,4 +1,5 @@
 #!/bin/bash
+shopt -s globstar
 
 echo "=== Iniciando PostgreSQL ==="
 

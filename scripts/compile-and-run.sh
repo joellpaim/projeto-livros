@@ -1,4 +1,6 @@
 #!/bin/bash
+shopt -s globstar
+
 
 # Script para compilar e executar a aplicação Java
 

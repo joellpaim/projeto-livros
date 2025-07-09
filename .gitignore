@@ -18,6 +18,7 @@ target/
 .idea/
 *.swp
 *.swo
+classes
 
 ### Banco de dados ###
 # Dados do PostgreSQL (não versionar dados do container)

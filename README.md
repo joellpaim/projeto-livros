@@ -60,8 +60,7 @@ projeto-livros/
 │       ├── dao/            # Data Access Objects (originais)
 │       ├── bd/             # Conexões de banco (originais)
 │       └── controller/     # Controladores (originais)
-├── src/resources/          # Recursos e configurações
-│   └── database.properties
+├── config.properties       # Recursos e configurações
 ├── scripts/                # Scripts de automação
 │   ├── start-postgresql.sh
 │   ├── start-mysql.sh
@@ -102,16 +101,16 @@ cd projeto-livros
 ### 2. Compilação e Execução
 
 ```bash
-./scripts/compile-and-run.sh
+sudo ./scripts/compile-and-run.sh {tipoBanco}
 ```
 
 ### 3. Troca de Banco de Dados
 
-Para trocar entre PostgreSQL e MySQL, edite o arquivo `src/resources/database.properties` ou use o método `DatabaseConfig.setCurrentDatabaseType("mysql")` no código.
+Para trocar entre PostgreSQL e MySQL, edite o arquivo `src/config.properties`, mude a variavel db.type para postgresql ou mysql
 
 ## 🔧 Configurações
 
-### Arquivo database.properties
+### Arquivo config.properties
 
 ```properties
 # PostgreSQL (padrão)
@@ -260,5 +259,4 @@ Para suporte e dúvidas:
 
 **Versão**: 2.0  
 **Data**: 2025  
-**Autor**: Sistema Melhorado  
-**Status**: Produção Ready ✅
+**Autor**: Grupo 8
